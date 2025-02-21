@@ -1,6 +1,6 @@
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
-import { useEffect, useRef, useState } from "react";
-import { Alert, Button, StyleSheet, View } from "react-native";
+import {useRef, useState } from "react";
+import { Alert, StyleSheet, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Pressable, Text, Animated } from "react-native";
 import axios from "axios";
@@ -30,11 +30,11 @@ export default function App() {
     loadEndpoint();
   });
 
-  const scaleAnim = useRef(new Animated.Value(1)).current; // Initial scale value
+  const scaleAnim = useRef(new Animated.Value(1)).current;
 
   const handlePressOut = () => {
     Animated.spring(scaleAnim, {
-      toValue: 1, // Return to normal size
+      toValue: 1,
       friction: 5,
       useNativeDriver: true,
     }).start();
@@ -212,6 +212,7 @@ const styles = StyleSheet.create({
   message: {
     textAlign: "center",
     paddingBottom: 10,
+    color:'white'
   },
   camera: {
     flex: 1,
@@ -221,7 +222,7 @@ const styles = StyleSheet.create({
     height: "100%",
     position: "absolute",
     alignSelf: "center",
-    justifyContent: "center", // Centers content vertically (if inside a flex container)
-    alignItems: "center", // Centers content horizontally
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

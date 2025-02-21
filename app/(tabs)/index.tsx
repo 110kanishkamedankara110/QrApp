@@ -1,27 +1,22 @@
-import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { useEffect, useRef, useState } from "react";
-import { Alert, Button, StyleSheet, TextInput, View } from "react-native";
+import { Alert, StyleSheet, TextInput, View } from "react-native";
 
 import { Pressable, Text, Animated } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
-  const [facing, setFacing] = useState<CameraType>("back");
-  const [permission, requestPermission] = useCameraPermissions();
-  const [scanned, setScanned] = useState(false);
-  const cameraRef = useRef<CameraView>(null);
   const handlePressIn = () => {
     Animated.spring(scaleAnim, {
-      toValue: 0.95, // Slightly shrink the button
+      toValue: 0.95, 
       useNativeDriver: true,
     }).start();
   };
-  const scaleAnim = useRef(new Animated.Value(1)).current; // Initial scale value
+  const scaleAnim = useRef(new Animated.Value(1)).current; 
 
   const handlePressOut = () => {
     Animated.spring(scaleAnim, {
-      toValue: 1, // Return to normal size
+      toValue: 1, 
       friction: 5,
       useNativeDriver: true,
     }).start();
@@ -100,7 +95,7 @@ export default function App() {
               paddingHorizontal: 20,
               alignItems: "center",
               justifyContent: "center",
-              transform: [{ scale: scaleAnim }], // Apply animation
+              transform: [{ scale: scaleAnim }], 
             }}
           >
             <Text style={{ fontSize: 20, fontWeight: "bold", color: "black" }}>

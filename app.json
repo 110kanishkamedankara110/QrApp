@@ -5,8 +5,8 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "QRcode",
-    "userInterfaceStyle": "dark",
+    "scheme": "qrcode",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true
@@ -41,11 +41,20 @@
       "expo-camera",
       [
         "react-native-permissions",
-        {
-          "cameraPermission": "Allow qrcode to access your camera",
-          "microphonePermission": "Allow qrcode to access your microphone",
-          "recordAudioAndroid": true
-        }
+        [
+          "react-native-permissions",
+          {
+            "cameraPermission": "Allow QR-code to access your camera",
+            "microphonePermission": "Allow QR-code to access your microphone",
+            "recordAudioAndroid": true,
+            "android": {
+              "permissions": [
+                "android.permission.CAMERA",
+                "android.permission.RECORD_AUDIO"
+              ]
+            }
+          }
+        ]
       ]
     ],
     "experiments": {
