@@ -1,45 +1,62 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
-
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { View, StyleSheet, Pressable } from "react-native";
+import { Tabs } from "expo-router";
+import { Entypo, AntDesign } from "@expo/vector-icons";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: "#fff",
         headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
+        tabBarBackground: () => <View style={styles.tabBarBackground} />,
+        tabBarStyle: styles.tabBarStyle,
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          tabBarShowLabel: false,
+          tabBarIcon: ({ focused }) => (
+            <Entypo name="link" size={28} color={focused ? "#FFD700" : "white"} />
+          ),
+          tabBarButton: (props) => <Pressable {...props} style={[props.style,{marginBottom:30}]} />, // Removes default feedback
         }}
       />
+
       <Tabs.Screen
-        name="explore"
+        name="qr"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          tabBarShowLabel: false,
+          tabBarIcon: ({ focused }) => (
+            <AntDesign name="qrcode" size={28} color={focused ? "#FFD700" : "white"} />
+          ),
+          tabBarButton: (props) => <Pressable {...props} style={[props.style,{marginBottom:30}]} />, // Removes default feedback
         }}
       />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBarBackground: {
+    position: "absolute",
+    left: 20,
+    right: 20,
+    height: "100%",
+    backgroundColor: "rgba(255, 255, 255, 0.5)", 
+    borderRadius: 20,
+    overflow: "hidden",
+  },
+  tabBarStyle: {
+    position: "absolute",
+    display:'flex',
+    bottom: 20,
+    height: 80,
+    borderTopWidth: 0,
+    elevation: 0,
+    backgroundColor: "transparent",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});

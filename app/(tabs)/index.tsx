@@ -1,74 +1,142 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
+import { useEffect, useRef, useState } from "react";
+import { Alert, Button, StyleSheet, TextInput, View } from "react-native";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { Pressable, Text, Animated } from "react-native";
 
-export default function HomeScreen() {
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+export default function App() {
+  const [facing, setFacing] = useState<CameraType>("back");
+  const [permission, requestPermission] = useCameraPermissions();
+  const [scanned, setScanned] = useState(false);
+  const cameraRef = useRef<CameraView>(null);
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.95, // Slightly shrink the button
+      useNativeDriver: true,
+    }).start();
+  };
+  const scaleAnim = useRef(new Animated.Value(1)).current; // Initial scale value
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1, // Return to normal size
+      friction: 5,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const [endpoint, setEndpoint] = useState("");
+  useEffect(() => {
+    const loadEndpoint = async () => {
+      try {
+        const storedValue = await AsyncStorage.getItem("endpoint");
+        if (storedValue) {
+          setEndpoint(storedValue);
+        }
+      } catch (error) {
+        console.error("Error loading endpoint:", error);
+      }
+    };
+
+    loadEndpoint();
+  }, []);
+  const saveEndpoint = async () => {
+    try {
+      await AsyncStorage.setItem("endpoint", endpoint);
+      setEndpoint(endpoint);
+      Alert.alert("Success","Saved: "+endpoint)
+      console.log("Saved:", endpoint);
+    } catch (error) {
+      Alert.alert("Error","Error saving endpoint: "+ error)
+    }
+  };
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <View style={styles.container}>
+      <View
+        style={{
+          padding: 20,
+        }}
+      >
+        <Text
+          style={{
+            marginBottom: 10,
+            fontSize: 20,
+            color: "white",
+          }}
+        >
+          Endpoint
+        </Text>
+        <TextInput
+          style={{
+            borderRadius: 20,
+            borderColor: "white",
+            borderWidth: 2,
+            color: "white",
+            height: 80,
+            fontSize: 20,
+            padding: 20,
+          }}
+          value={endpoint}
+          onChangeText={setEndpoint}
+          placeholderTextColor={"rgba(255, 255, 255, 0.5)"}
+          placeholder="Endpoint"
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+
+        <Pressable
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          style={{
+            marginTop: 30,
+          }}
+          onPress={saveEndpoint}
+        >
+          <Animated.View
+            style={{
+              backgroundColor: "white",
+              borderRadius: 20,
+              height: 50,
+              paddingHorizontal: 20,
+              alignItems: "center",
+              justifyContent: "center",
+              transform: [{ scale: scaleAnim }], // Apply animation
+            }}
+          >
+            <Text style={{ fontSize: 20, fontWeight: "bold", color: "black" }}>
+              Save
+            </Text>
+          </Animated.View>
+        </Pressable>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  viewStyle: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+
+  container: {
+    flex: 1,
+    justifyContent: "center",
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  message: {
+    textAlign: "center",
+    paddingBottom: 10,
+  },
+  camera: {
+    flex: 1,
+  },
+  buttonContainer: {
+    position: "absolute",
+    bottom: 50,
+    alignSelf: "center",
   },
 });

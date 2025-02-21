@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "Qr-code",
-    "slug": "Qr-code",
+    "name": "QR-code",
+    "slug": "QR-code",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
+    "scheme": "QRcode",
+    "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true
@@ -15,7 +15,12 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "lk.phoenix.Qr"
     },
     "web": {
       "bundler": "metro",
@@ -32,10 +37,27 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      "expo-camera",
+      [
+        "react-native-permissions",
+        {
+          "cameraPermission": "Allow qrcode to access your camera",
+          "microphonePermission": "Allow qrcode to access your microphone",
+          "recordAudioAndroid": true
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "387ef08f-9004-43f5-8380-6c9bdfab2c1f"
+      }
     }
   }
 }
