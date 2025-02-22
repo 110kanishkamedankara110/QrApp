@@ -4,7 +4,7 @@ import { Alert, StyleSheet, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Pressable, Text, Animated } from "react-native";
 import axios from "axios";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { BlurView } from "expo-blur";
 import Loader from "@/components/ui/Loader";
 import LottieView from "lottie-react-native";
@@ -69,11 +69,13 @@ export default function App() {
     setScanned(true);
     if (endpoint == "" || endpoint == null) {
       Alert.alert("Warmimg", "Plese Enter Endpoint");
+      setLoading(false);
+      router.push('/settings');
       return;
     }
 
     axios
-      .post(endpoint, { mobile: result.data })
+      .post(endpoint, { data: result.data })
       .then((result) => {
         setMessage(result.data);
         setLoading(false);
