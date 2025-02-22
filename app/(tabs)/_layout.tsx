@@ -12,19 +12,8 @@ export default function TabLayout() {
         tabBarStyle: styles.tabBarStyle,
       }}
     >
-      <Tabs.Screen
+       <Tabs.Screen
         name="index"
-        options={{
-          tabBarShowLabel: false,
-          tabBarIcon: ({ focused }) => (
-            <Entypo name="link" size={28} color={focused ? "#FFD700" : "white"} />
-          ),
-          tabBarButton: (props) => <Pressable {...props} style={[props.style,{marginBottom:30}]} />, // Removes default feedback
-        }}
-      />
-
-      <Tabs.Screen
-        name="qr"
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
@@ -33,6 +22,18 @@ export default function TabLayout() {
           tabBarButton: (props) => <Pressable {...props} style={[props.style,{marginBottom:30}]} />, // Removes default feedback
         }}
       />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          tabBarShowLabel: false,
+          tabBarIcon: ({ focused }) => (
+            <Entypo name="cog" size={28} color={focused ? "#FFD700" : "white"} />
+          ),
+          tabBarButton: (props) => <Pressable {...props} style={[props.style,{marginBottom:30}]} />, // Removes default feedback
+        }}
+      />
+
+     
     </Tabs>
   );
 }
