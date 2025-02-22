@@ -34,6 +34,19 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="id"
+        options={{
+          tabBarShowLabel: false,
+          tabBarIcon: ({ focused }) => (
+            <AntDesign
+              name="tag"
+              size={28}
+              color={focused ? "black" : "white"}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="settings"
         options={{
           tabBarShowLabel: false,
