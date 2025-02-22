@@ -1,6 +1,7 @@
 import { View, StyleSheet, Pressable } from "react-native";
 import { Tabs } from "expo-router";
 import { Entypo, AntDesign } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
 
 export default function TabLayout() {
   return (
@@ -8,18 +9,28 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: "#fff",
         headerShown: false,
-        tabBarBackground: () => <View style={styles.tabBarBackground} />,
+        tabBarBackground: () => (
+          <>
+            <View style={styles.tabBarBackground}>
+              <BlurView intensity={50} style={{ flex: 1 }} />
+            </View>
+          </>
+        ),
         tabBarStyle: styles.tabBarStyle,
+        tabBarItemStyle:{marginBottom:30,padding:20}
       }}
     >
-       <Tabs.Screen
+      <Tabs.Screen
         name="index"
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
-            <AntDesign name="qrcode" size={28} color={focused ? "#FFD700" : "white"} />
+            <AntDesign
+              name="qrcode"
+              size={28}
+              color={focused ? "black" : "white"}
+            />
           ),
-          tabBarButton: (props) => <Pressable {...props} style={[props.style,{marginBottom:30}]} />, // Removes default feedback
         }}
       />
       <Tabs.Screen
@@ -27,13 +38,14 @@ export default function TabLayout() {
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
-            <Entypo name="cog" size={28} color={focused ? "#FFD700" : "white"} />
+            <Entypo
+              name="cog"
+              size={28}
+              color={focused ? "black" : "white"}
+            />
           ),
-          tabBarButton: (props) => <Pressable {...props} style={[props.style,{marginBottom:30}]} />, // Removes default feedback
         }}
       />
-
-     
     </Tabs>
   );
 }
@@ -44,13 +56,14 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
     height: "100%",
-    backgroundColor: "rgba(255, 255, 255, 0.5)", 
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
+
     borderRadius: 20,
     overflow: "hidden",
   },
   tabBarStyle: {
     position: "absolute",
-    display:'flex',
+    display: "flex",
     bottom: 20,
     height: 80,
     borderTopWidth: 0,

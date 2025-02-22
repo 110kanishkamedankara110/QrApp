@@ -5,6 +5,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Pressable, Text, Animated } from "react-native";
 import axios from "axios";
 import { useFocusEffect } from "expo-router";
+import { BlurView } from "expo-blur";
+import Loader from "@/components/ui/Loader";
+import LottieView from "lottie-react-native";
 
 export default function App() {
   const [facing, setFacing] = useState<CameraType>("back");
@@ -13,7 +16,7 @@ export default function App() {
   const cameraRef = useRef<CameraView>(null);
   const [endpoint, setEndpoint] = useState("");
   const [message, setMessage] = useState("");
-
+  const [loading, setLoading] = useState(false);
   useFocusEffect(() => {
     const loadEndpoint = async () => {
       try {
@@ -38,6 +41,13 @@ export default function App() {
       useNativeDriver: true,
     }).start();
   };
+
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.95,
+      useNativeDriver: true,
+    }).start();
+  };
   const handlePausePreview = async () => {
     if (cameraRef.current) {
       await cameraRef.current.pausePreview();
@@ -51,25 +61,22 @@ export default function App() {
     }
     setScanned(false);
   };
-  const handlePressIn = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 0.95,
-      useNativeDriver: true,
-    }).start();
-  };
+
   const handleBarcodeScanned = async (result: any) => {
     if (scanned) return;
+    setLoading(true);
     await handlePausePreview();
     setScanned(true);
     if (endpoint == "" || endpoint == null) {
       Alert.alert("Warmimg", "Plese Enter Endpoint");
       return;
     }
-    console.log(result.data);
+
     axios
       .post(endpoint, { mobile: result.data })
       .then((result) => {
         setMessage(result.data);
+        setLoading(false);
       })
       .catch((error) => {
         const errorMessage =
@@ -77,6 +84,7 @@ export default function App() {
           error.message ||
           "An unknown error occurred";
         setMessage(errorMessage);
+        setLoading(false);
       });
   };
   let content;
@@ -118,81 +126,105 @@ export default function App() {
     );
   } else {
     content = (
-      <CameraView
-        ref={cameraRef}
-        barcodeScannerSettings={{
-          barcodeTypes: ["qr"],
-        }}
-        onBarcodeScanned={handleBarcodeScanned}
-        style={styles.camera}
-        facing={facing}
-      >
-        <View style={styles.viewStyle}>
-          {!scanned && (
-            <View
-              style={{
-                width: "70%",
-                aspectRatio: 1,
-                borderColor: "white",
-                borderWidth: 4,
-                borderRadius: 50,
-              }}
-            ></View>
-          )}
-        </View>
-        <View style={styles.buttonContainer}>
-          {scanned && (
-            <>
-              <Text
+      <>
+        {loading && <Loader />}
+
+        <CameraView
+          ref={cameraRef}
+          barcodeScannerSettings={{
+            barcodeTypes: ["qr"],
+          }}
+          onBarcodeScanned={handleBarcodeScanned}
+          style={styles.camera}
+          facing={facing}
+        >
+          <View style={styles.viewStyle}>
+            {!scanned && (
+              <View
                 style={{
-                  color: "white",
-                  fontSize: 30,
-                  padding: 10,
-                  textAlign: "center",
+                  width: "80%",
+                  aspectRatio: 1,
+                 
                 }}
               >
-                Response :
-              </Text>
-              <Text
-                style={{
-                  color: "yellow",
-                  fontSize: 30,
-                  padding: 10,
-                  textAlign: "center",
-                }}
-              >
-                {message}
-              </Text>
-              <Pressable
-                onPressIn={handlePressIn}
-                onPressOut={handlePressOut}
-                style={{
-                  marginTop: 30,
-                }}
-                onPress={handleResumePreview}
-              >
-                <Animated.View
+                <LottieView
+                  source={require("@/assets/images/main.json")} // Path to your JSON file
+                  autoPlay
+                  loop
                   style={{
-                    backgroundColor: "white",
-                    borderRadius: 20,
-                    height: 50,
-                    paddingHorizontal: 20,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    transform: [{ scale: scaleAnim }],
+                    width: "100%",
+                    height: "100%",
+                    zIndex: 9999,
+                  }}
+                />
+              </View>
+            )}
+          </View>
+          <View style={styles.buttonContainer}>
+            {scanned && (
+              <View
+                style={{
+                  padding: 20,
+                  backgroundColor: "rgba(255,255,255,0.50)",
+                  borderRadius: 20,
+                  zIndex: 0,
+                }}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 35,
+                    padding: 10,
+                    textAlign: "center",
                   }}
                 >
-                  <Text
-                    style={{ fontSize: 20, fontWeight: "bold", color: "black" }}
+                  Response
+                </Text>
+                <Text
+                  style={{
+                    color: "yellow",
+                    fontSize: 30,
+                    padding: 10,
+                    textAlign: "center",
+                  }}
+                >
+                  {message}
+                </Text>
+                <Pressable
+                  onPressIn={handlePressIn}
+                  onPressOut={handlePressOut}
+                  style={{
+                    marginTop: 30,
+                  }}
+                  onPress={handleResumePreview}
+                >
+                  <Animated.View
+                    style={{
+                      backgroundColor: "white",
+                      borderRadius: 20,
+                      height: 50,
+                      paddingHorizontal: 20,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      transform: [{ scale: scaleAnim }],
+                    }}
                   >
-                    Scan
-                  </Text>
-                </Animated.View>
-              </Pressable>
-            </>
-          )}
-        </View>
-      </CameraView>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        fontWeight: "bold",
+                        color: "black",
+                      }}
+                    >
+                      Scan
+                    </Text>
+                  </Animated.View>
+                </Pressable>
+              </View>
+            )}
+          </View>
+        </CameraView>
+      </>
     );
   }
 
